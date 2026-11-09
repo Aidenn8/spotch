@@ -227,6 +227,7 @@ struct ProgressRow: View {
             HStack(spacing: 10) {
                 Text(Self.format(elapsed))
                     .contentTransition(.numericText())
+                    .animation(.easeInOut(duration: 0.25), value: elapsed)
                     .frame(width: 34, alignment: .leading)
 
                 GeometryReader { g in
@@ -249,7 +250,8 @@ struct ProgressRow: View {
                 }
 
                 Text("-" + Self.format(duration.rounded(.down) - elapsed))
-                    .contentTransition(.numericText())
+                    .contentTransition(.numericText(countsDown: true))
+                    .animation(.easeInOut(duration: 0.25), value: elapsed)
                     .frame(width: 34, alignment: .trailing)
             }
             .font(.system(size: 10, weight: .medium).monospacedDigit())
