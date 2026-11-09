@@ -7,7 +7,9 @@
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Turns the notch on your MacBook into a now-playing widget for Spotify: the notch shows what's
-playing, and grows into a mini player when you hover over it.
+playing, and grows into a mini player when you hover over it. You can see the
+song and control it without leaving what you're doing. It works with the Spotify
+app already on your Mac, so there's no Spotify login or API key to set up.
 
 <p align="center">
   <img src="docs/media/demo.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics scroll in the panel.">
@@ -53,7 +55,8 @@ and the Spotify app.
 
 1. Open the downloaded **Spotch.dmg**.
 2. Drag **Spotch** into the **Applications** folder.
-3. Open **Spotch** from your Applications folder.
+3. Open **Spotch** from your Applications folder. It won't run from the
+   disk image itself; it just asks you to move it first.
 4. macOS will warn that it can't check the app for malicious software. That's
    because this is a free project that isn't registered with Apple. To allow it,
    this one time:
@@ -70,7 +73,8 @@ restarting your Mac.
 ### Uninstall
 
 Drag **Spotch** from your Applications folder to the Trash. It removes
-its login item by itself, so nothing is left behind.
+its login item by itself, so it won't come back. Only its small preferences file
+(your background and lyrics choices) stays on your Mac.
 
 ### Updating
 
@@ -130,8 +134,9 @@ flowchart LR
   window in its own space above the desktops, so it doesn't slide when you
   switch Spaces (`Sources/StickySpace.swift`).
 - **Lyrics** are fetched from LRCLIB when the song changes and timed against
-  Spotify's playback position, with one timer for the next line rather than
-  polling. The timers only run while the panel is open.
+  Spotify's playback position, with one timer for the next line. Spotify doesn't
+  announce seeks, so the position is re-read every 8 seconds. These timers only
+  run while the panel is open and music is playing.
 - **Opening with Spotify:** when you open the app it installs a small login
   agent (`Watcher/main.swift`) that waits for Spotify to launch and opens the
   widget. The widget quits when Spotify does. When the app is moved to the
@@ -173,11 +178,20 @@ cd spotch
 `dist/Spotch.dmg`. `swift test` runs the tests (this needs Xcode), and
 `open Package.swift` opens the project in Xcode.
 
-Launch flags for development: `--demo` plays made-up songs without Spotify,
-`--expanded` pins the panel open. `./tools/record-demo.sh` re-records the GIF,
-video and screenshots in `docs/media`: it renders the real widget in an
-off-screen window, plays a scripted hover, and captures every frame, so nothing
-appears on screen while it runs. `tools/make-icon.swift` redraws the app icon.
+To try the widget without Spotify, quit any running copy first (only one can run
+at a time, and a second one exits silently), then:
+
+```sh
+./build.sh
+"build/Spotch.app/Contents/MacOS/Spotch" --demo
+```
+
+`--demo` plays made-up songs, and adding `--expanded` pins the panel open.
+
+`./tools/record-demo.sh` re-records the GIF, video and screenshots in
+`docs/media`: it renders the real widget in an off-screen window, plays a
+scripted hover, and captures every frame, so nothing appears on screen while it
+runs. `tools/make-icon.swift` redraws the app icon.
 
 ## Known limitations
 
@@ -187,6 +201,9 @@ appears on screen while it runs. `tools/make-icon.swift` redraws the app icon.
 - The private APIs used to stay fixed during Space switches are undocumented
   and could change in a future macOS release.
 - The app isn't notarized by Apple, hence the one-time **Open Anyway** step.
+
+Found a bug or have an idea?
+[Open an issue](https://github.com/Aidenn8/spotch/issues).
 
 ## License
 
