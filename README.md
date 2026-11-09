@@ -10,7 +10,7 @@ Turns the notch on your MacBook into a now-playing widget for Spotify: the notch
 playing, and grows into a mini player when you hover over it.
 
 <p align="center">
-  <img src="docs/media/demo.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics scroll in the panel.">
+  <a href="docs/media/demo-full-screen.mp4"><img src="docs/media/demo-full-screen.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics appear in the panel. The panel closes and the view pulls back to show the whole MacBook screen."></a>
 </p>
 
 <p align="center">
