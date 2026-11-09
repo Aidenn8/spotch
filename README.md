@@ -64,9 +64,6 @@ and the Spotify app.
 5. Spotify opens and the widget appears in the notch. When macOS asks whether
    Spotch can control Spotify, click **OK**.
 
-That's it. From now on the widget shows up whenever Spotify is open, even after
-restarting your Mac.
-
 ### Uninstall
 
 Drag **Spotch** from your Applications folder to the Trash. It removes
