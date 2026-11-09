@@ -109,7 +109,7 @@ final class NotchController {
     private let container: PinnedContainerView
     private let sticky = StickySpace()
     private let state = NotchState(geometry: .detect())
-    private let model: SpotifyModel
+    private let model: PlayerModel
     private let lyrics: LyricsModel
     private let pinExpanded: Bool
 
@@ -121,8 +121,8 @@ final class NotchController {
     private var cancellables = Set<AnyCancellable>()
 
     init(demo: Bool, pinExpanded: Bool) {
-        model = SpotifyModel(demo: demo)
-        lyrics = LyricsModel(spotify: model, demo: demo)
+        model = PlayerModel(demo: demo)
+        lyrics = LyricsModel(player: model, demo: demo)
         self.pinExpanded = pinExpanded
 
         host = HoverHostingView(rootView: NotchView(state: state, model: model, lyrics: lyrics,

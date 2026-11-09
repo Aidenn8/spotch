@@ -45,8 +45,8 @@ let activity = ProcessInfo.processInfo.beginActivity(options: [.userInitiated, .
 
 let state = NotchState(geometry: geometry)
 state.style = .solid
-let model = SpotifyModel(demo: true)
-let lyrics = LyricsModel(spotify: model, demo: true)
+let model = PlayerModel(demo: true)
+let lyrics = LyricsModel(player: model, demo: true)
 var cancellables = Set<AnyCancellable>()
 
 let host = NSHostingView(rootView: NotchView(state: state, model: model, lyrics: lyrics, onQuit: {}))

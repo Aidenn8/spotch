@@ -19,7 +19,7 @@ final class AccentColorTests: XCTestCase {
 
     func testGreyCoverFallsBackToSoftWhite() {
         let accent = Artwork.accent(from: solid(NSColor(srgbRed: 0.5, green: 0.5, blue: 0.5, alpha: 1)))
-        XCTAssertEqual(accent, SpotifyModel.fallbackAccent)
+        XCTAssertEqual(accent, PlayerModel.fallbackAccent)
     }
 
     func testPicksTheCoverHue() {
@@ -48,7 +48,7 @@ final class PlayerTests: XCTestCase {
     }
 
     func testDemoNextAndPreviousWrapAround() {
-        let model = SpotifyModel(demo: true)
+        let model = PlayerModel(demo: true)
         let ids = DemoTrack.all.map(\.track.id)
         XCTAssertEqual(model.track?.id, ids[0])
         model.next()
@@ -60,7 +60,7 @@ final class PlayerTests: XCTestCase {
     }
 
     func testPositionIsExtrapolatedAndClamped() {
-        let model = SpotifyModel(demo: true)
+        let model = PlayerModel(demo: true)
         let start = DemoTrack.all[0].start
         let now = Date()
         XCTAssertEqual(model.position(at: now), start, accuracy: 0.5)

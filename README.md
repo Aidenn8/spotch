@@ -6,8 +6,12 @@
 ![Swift](https://img.shields.io/badge/Swift-5.10-F05138?logo=swift&logoColor=white)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Turns the notch on your MacBook into a now-playing widget for Spotify: the notch shows what's
-playing, and grows into a mini player when you hover over it.
+Turns the notch on your MacBook into a now-playing widget: the notch shows
+what's playing in the Spotify desktop app, and grows into a mini player when
+you hover over it.
+
+<sub>Spotch is an independent project. It isn't affiliated with, sponsored or
+endorsed by Spotify.</sub>
 
 <p align="center">
   <a href="docs/media/demo-full-screen.mp4"><img src="docs/media/demo-full-screen.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics appear in the panel. The panel closes and the view pulls back to show the whole MacBook screen."></a>
@@ -74,6 +78,9 @@ its login item by itself, so nothing is left behind.
 Download the new version, drag it into Applications (replace the old one), and
 open it once.
 
+Coming from version 1.2.1 or earlier? Open the new version once: it switches
+off the old copy, which you can then drag to the Trash.
+
 ## Tips
 
 - Right-click the widget to change the background, turn lyrics on or off, open
@@ -94,7 +101,7 @@ Written in Swift (AppKit + SwiftUI), about 1,900 lines with no dependencies.
 flowchart LR
     spotify["Spotify app"]
     watcher["Login agent<br/>(Watcher)"]
-    model["SpotifyModel<br/>playback state"]
+    model["PlayerModel<br/>playback state"]
     lyrics["LyricsModel<br/>synced lyrics"]
     lrclib[("LRCLIB")]
     controller["NotchController<br/>window, hover, mode"]
@@ -142,7 +149,7 @@ Sources/
   NotchController.swift   the panel window, hover handling, mode changes
   NotchView.swift         the SwiftUI widget: closed and open layouts, controls
   NotchGeometry.swift     notch detection, sizes for each mode, the notch shape
-  Spotify.swift           playback state, Spotify commands, accent color from the cover
+  Player.swift            playback state, Spotify commands, accent color from the cover
   Lyrics.swift            LRCLIB lookup, LRC parsing, line timing, the lyrics scroller
   Visualizer.swift        the Core Animation bars
   PanelStyle.swift        solid and glass backgrounds
@@ -187,5 +194,8 @@ appears on screen while it runs. `tools/make-icon.swift` redraws the app icon.
 
 ## License
 
-[MIT](LICENSE). Spotch is an independent project and isn't affiliated
-with Spotify.
+[MIT](LICENSE). Spotch is an independent project and isn't affiliated with,
+sponsored or endorsed by Spotify. Spotify is a trademark of Spotify AB, used
+here only to say which app Spotch works with. Spotch talks to the Spotify
+desktop app through the AppleScript interface macOS provides; it doesn't use
+Spotify's web API, and this repository contains no Spotify code or logos.

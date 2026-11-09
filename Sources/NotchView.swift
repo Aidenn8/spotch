@@ -27,7 +27,7 @@ final class NotchState: ObservableObject {
 
 struct NotchView: View {
     @ObservedObject var state: NotchState
-    @ObservedObject var model: SpotifyModel
+    @ObservedObject var model: PlayerModel
     var lyrics: LyricsModel
     var onQuit: () -> Void
 
@@ -211,7 +211,7 @@ struct ArtworkView: View {
 }
 
 struct ProgressRow: View {
-    @ObservedObject var model: SpotifyModel
+    @ObservedObject var model: PlayerModel
     @State private var dragFraction: Double?
     @State private var hovering = false
 

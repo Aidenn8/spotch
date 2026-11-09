@@ -31,6 +31,7 @@ enum Installer {
     /// Called whenever the app is opened by hand. Rewrites and reloads the
     /// agent every time, so it follows the app if it's moved or updated.
     static func install() {
+        retireEarlierCopies()
         clearWatcherQuarantine()
         let agent: [String: Any] = [
             "Label": agentLabel,
@@ -54,6 +55,34 @@ enum Installer {
     static func uninstall() {
         launchctl("bootout", "gui/\(getuid())/\(agentLabel)")
         try? FileManager.default.removeItem(at: plistURL)
+    }
+
+    /// Versions before 1.3 had a different bundle identifier, so their login
+    /// agent has another label and would keep opening the old copy next to
+    /// this one. Remove any such agent and quit the copy it belongs to.
+    private static func retireEarlierCopies() {
+        let folder = plistURL.deletingLastPathComponent()
+        let files = (try? FileManager.default.contentsOfDirectory(at: folder, includingPropertiesForKeys: nil)) ?? []
+        for file in files {
+            let name = file.lastPathComponent
+            guard name.hasPrefix("com.aidenn8."), name.hasSuffix(".watcher.plist"),
+                  name != plistURL.lastPathComponent,
+                  let data = try? Data(contentsOf: file),
+                  let agent = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any],
+                  let label = agent["Label"] as? String,
+                  let watcher = (agent["ProgramArguments"] as? [String])?.first
+            else { continue }
+            launchctl("bootout", "gui/\(getuid())/\(label)")
+            try? FileManager.default.removeItem(at: file)
+            // The watcher sits in <app>.app/Contents/MacOS.
+            let app = URL(fileURLWithPath: watcher).deletingLastPathComponent()
+                .deletingLastPathComponent().deletingLastPathComponent().standardizedFileURL
+            guard app.pathExtension == "app", app != Bundle.main.bundleURL.standardizedFileURL else { continue }
+            for running in NSWorkspace.shared.runningApplications
+            where running.bundleURL?.standardizedFileURL == app {
+                running.terminate()
+            }
+        }
     }
 
     private static func launchctl(_ arguments: String...) {

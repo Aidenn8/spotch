@@ -38,7 +38,7 @@ final class LyricsModel: ObservableObject {
     /// Lines change a beat early so the scroll lands as the line starts.
     private static let lead: TimeInterval = 0.3
 
-    private let spotify: SpotifyModel
+    private let player: PlayerModel
     private let demo: Bool
     private var cache: [String: [LyricLine]] = [:]   // track id -> lines ([] = none)
     private var loadingID: String?
@@ -47,17 +47,17 @@ final class LyricsModel: ObservableObject {
     private var syncTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
 
-    init(spotify: SpotifyModel, demo: Bool) {
-        self.spotify = spotify
+    init(player: PlayerModel, demo: Bool) {
+        self.player = player
         self.demo = demo
         // @Published fires before the value changes, so read it a beat later.
-        spotify.$track.map { $0?.id }.removeDuplicates()
+        player.$track.map { $0?.id }.removeDuplicates()
             .sink { [weak self] _ in DispatchQueue.main.async { self?.reload() } }
             .store(in: &cancellables)
-        spotify.$isPlaying.removeDuplicates()
+        player.$isPlaying.removeDuplicates()
             .sink { [weak self] _ in DispatchQueue.main.async { self?.retime() } }
             .store(in: &cancellables)
-        spotify.anchorChanged
+        player.anchorChanged
             .sink { [weak self] in self?.retime() }
             .store(in: &cancellables)
     }
@@ -73,7 +73,7 @@ final class LyricsModel: ObservableObject {
     private func reload() {
         request?.cancel()
         request = nil
-        guard enabled, let track = spotify.track else {
+        guard enabled, let track = player.track else {
             loadingID = nil
             lines = []
             current = -1
@@ -123,11 +123,11 @@ final class LyricsModel: ObservableObject {
             return
         }
         guard visible else { stopSync(); return }
-        let position = spotify.position(at: Date()) + Self.lead
+        let position = player.position(at: Date()) + Self.lead
         let index = lines.lastIndex { $0.time <= position } ?? -1
         if index != current { current = index }
 
-        guard spotify.isPlaying else { stopSync(); return }
+        guard player.isPlaying else { stopSync(); return }
         startSync()
         guard lines.indices.contains(index + 1) else { return }
         let timer = Timer(timeInterval: max(lines[index + 1].time - position, 0.02), repeats: false) { [weak self] _ in
@@ -142,7 +142,7 @@ final class LyricsModel: ObservableObject {
     /// position every few seconds while lyrics are scrolling.
     private func startSync() {
         guard syncTimer == nil else { return }
-        let timer = Timer(timeInterval: 8, repeats: true) { [weak self] _ in self?.spotify.syncPosition() }
+        let timer = Timer(timeInterval: 8, repeats: true) { [weak self] _ in self?.player.syncPosition() }
         timer.tolerance = 1
         RunLoop.main.add(timer, forMode: .common)
         syncTimer = timer
@@ -159,7 +159,7 @@ final class LyricsModel: ObservableObject {
 enum LyricsFetcher {
     private static let base = URL(string: "https://lrclib.net/api")!
     // LRCLIB asks clients to identify themselves.
-    private static let userAgent = "Spotch/1.2 (https://github.com/Aidenn8/spotch)"
+    private static let userAgent = "Spotch/1.3 (https://github.com/Aidenn8/spotch)"
 
     private struct Record: Decodable {
         let duration: Double?

@@ -13,14 +13,14 @@ struct Track: Equatable {
 
 /// Mirrors Spotify's playback state. Updates are push-based: Spotify posts a
 /// distributed notification on every change, so there is no polling.
-final class SpotifyModel: ObservableObject {
-    static let bundleID = "com.spotify.client"
+final class PlayerModel: ObservableObject {
+    static let spotifyBundleID = "com.spotify.client"
     static let fallbackAccent = NSColor(white: 0.92, alpha: 1)
 
     @Published private(set) var track: Track?
     @Published private(set) var isPlaying = false
     @Published private(set) var artwork: NSImage?
-    @Published private(set) var accent = SpotifyModel.fallbackAccent
+    @Published private(set) var accent = PlayerModel.fallbackAccent
     @Published private(set) var shuffling = false
     @Published private(set) var repeating = false
     /// False for the first moments after Spotify launches, while it still
@@ -48,7 +48,7 @@ final class SpotifyModel: ObservableObject {
     private var artworkTrackID: String?   // track the current artwork belongs to
 
     static var isRunning: Bool {
-        !NSRunningApplication.runningApplications(withBundleIdentifier: bundleID).isEmpty
+        !NSRunningApplication.runningApplications(withBundleIdentifier: spotifyBundleID).isEmpty
     }
 
     init(demo: Bool = false) {
@@ -130,7 +130,7 @@ final class SpotifyModel: ObservableObject {
     }
 
     func openSpotify() {
-        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.bundleID) else { return }
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: Self.spotifyBundleID) else { return }
         NSWorkspace.shared.openApplication(at: url, configuration: .init())
     }
 
@@ -157,7 +157,7 @@ final class SpotifyModel: ObservableObject {
 
     @objc private func appTerminated(_ note: Notification) {
         let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
-        if app?.bundleIdentifier == Self.bundleID { clear() }
+        if app?.bundleIdentifier == Self.spotifyBundleID { clear() }
     }
 
     private static let stateScript = """
@@ -237,7 +237,7 @@ final class SpotifyModel: ObservableObject {
     /// hold the widget back until it reports playback or moves off its cached
     /// song (and that song's cover has loaded), with a 4s backstop.
     private func holdWhileSpotifySyncs() {
-        let launch = NSRunningApplication.runningApplications(withBundleIdentifier: Self.bundleID)
+        let launch = NSRunningApplication.runningApplications(withBundleIdentifier: Self.spotifyBundleID)
             .compactMap(\.launchDate).max()
         guard let launch else { return }
         let remaining = 4 - Date().timeIntervalSince(launch)
@@ -365,7 +365,7 @@ enum Artwork {
             ctx.draw(image, in: CGRect(x: 0, y: 0, width: side, height: side))
             return true
         }
-        guard drawn else { return SpotifyModel.fallbackAccent }
+        guard drawn else { return PlayerModel.fallbackAccent }
 
         let binCount = 18
         var weight = [CGFloat](repeating: 0, count: binCount)
@@ -390,7 +390,7 @@ enum Artwork {
         }
 
         guard let best = weight.indices.max(by: { weight[$0] < weight[$1] }),
-              weight[best] > CGFloat(side * side) * 0.02 else { return SpotifyModel.fallbackAccent }
+              weight[best] > CGFloat(side * side) * 0.02 else { return PlayerModel.fallbackAccent }
         var hue = atan2(hy[best], hx[best]) / (2 * .pi)
         if hue < 0 { hue += 1 }
         let s = min(max(sat[best] / weight[best], 0.4), 0.75)

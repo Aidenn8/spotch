@@ -43,8 +43,8 @@ final class LyricsTimingTests: XCTestCase {
     }
 
     func testFollowsPlaybackPosition() throws {
-        let spotify = SpotifyModel(demo: true)
-        let lyrics = LyricsModel(spotify: spotify, demo: true)
+        let player = PlayerModel(demo: true)
+        let lyrics = LyricsModel(player: player, demo: true)
         lyrics.enabled = true
         lyrics.visible = true
         settle()
@@ -55,29 +55,29 @@ final class LyricsTimingTests: XCTestCase {
         XCTAssertEqual(lyrics.text(at: lyrics.current), "We keep driving with the radio on")
 
         // Lines change 0.3 s early, so the scroll lands on time.
-        spotify.seek(to: 73.8)
+        player.seek(to: 73.8)
         XCTAssertEqual(lyrics.lines[lyrics.current].time, 74)
-        spotify.seek(to: 10)
+        player.seek(to: 10)
         XCTAssertEqual(lyrics.current, -1)
         XCTAssertNil(lyrics.text(at: -1), "before the first line shows a music note")
     }
 
     func testTrackWithoutLyricsMakesNoRoom() {
-        let spotify = SpotifyModel(demo: true)
-        let lyrics = LyricsModel(spotify: spotify, demo: true)
+        let player = PlayerModel(demo: true)
+        let lyrics = LyricsModel(player: player, demo: true)
         lyrics.enabled = true
         settle()
         XCTAssertTrue(lyrics.showing)
 
-        spotify.next()  // an instrumental
+        player.next()  // an instrumental
         settle()
         XCTAssertEqual(lyrics.status, .missing)
         XCTAssertFalse(lyrics.showing)
     }
 
     func testOffUnlessEnabled() {
-        let spotify = SpotifyModel(demo: true)
-        let lyrics = LyricsModel(spotify: spotify, demo: true)
+        let player = PlayerModel(demo: true)
+        let lyrics = LyricsModel(player: player, demo: true)
         settle()
         XCTAssertEqual(lyrics.status, .off)
         XCTAssertFalse(lyrics.showing)

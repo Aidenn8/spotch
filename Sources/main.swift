@@ -33,7 +33,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 // Opened by hand: set up quietly. If Spotify isn't running,
                 // open it; the login agent brings the widget up once it is.
                 Installer.install()
-                if !SpotifyModel.isRunning && !args.contains("--quiet") {
+                if !PlayerModel.isRunning && !args.contains("--quiet") {
                     // Quit only once the launch request has gone through;
                     // quitting right away cancels it.
                     openSpotify { NSApp.terminate(nil) }
@@ -42,7 +42,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
 
             // Spotch lives and dies with Spotify.
-            guard SpotifyModel.isRunning else { NSApp.terminate(nil); return }
+            guard PlayerModel.isRunning else { NSApp.terminate(nil); return }
             NSWorkspace.shared.notificationCenter.addObserver(
                 self, selector: #selector(appTerminated(_:)),
                 name: NSWorkspace.didTerminateApplicationNotification, object: nil)
@@ -57,11 +57,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func appTerminated(_ note: Notification) {
         let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
-        guard app?.bundleIdentifier == SpotifyModel.bundleID else { return }
+        guard app?.bundleIdentifier == PlayerModel.spotifyBundleID else { return }
         // Let the widget retract into the notch first, and stay if Spotify
         // was relaunched in the meantime.
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            if !SpotifyModel.isRunning { NSApp.terminate(nil) }
+            if !PlayerModel.isRunning { NSApp.terminate(nil) }
         }
     }
 
@@ -79,7 +79,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func openSpotify(then done: @escaping () -> Void) {
-        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: SpotifyModel.bundleID) else {
+        guard let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: PlayerModel.spotifyBundleID) else {
             done()
             return
         }
