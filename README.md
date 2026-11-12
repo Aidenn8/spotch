@@ -18,7 +18,7 @@ endorsed by Spotify.</sub>
 </p>
 
 <p align="center">
-  <b><a href="https://github.com/Aidenn8/spotch/releases/latest/download/Spotch.dmg">⬇ Download Spotch</a></b>
+  <b><a href="#install">Install in one step</a></b>
   · free · macOS 14+ on a MacBook with a notch
 </p>
 
@@ -46,18 +46,34 @@ endorsed by Spotify.</sub>
   </tr>
 </table>
 
-## Download
-
-**[⬇ Download Spotch](https://github.com/Aidenn8/spotch/releases/latest/download/Spotch.dmg)**
+## Install
 
 You need a MacBook with a notch (Apple Silicon) on macOS 14 Sonoma or later,
 and the Spotify app.
 
-### Install
+Open **Terminal** (in Applications → Utilities), paste this line and press
+Return:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Aidenn8/spotch/main/get.sh | bash
+```
+
+That's it. It downloads the latest release, puts Spotch in your Applications
+folder, sets it up and opens Spotify, and the widget appears as soon as a song
+plays. When macOS asks whether Spotch can control Spotify, click **OK**.
+
+Because the download happens in Terminal rather than in a browser, macOS
+doesn't show its warning about apps from unregistered developers.
+[`get.sh`](get.sh) is short if you'd like to read it first.
+
+### Or install from the disk image
+
+**[⬇ Download Spotch.dmg](https://github.com/Aidenn8/spotch/releases/latest/download/Spotch.dmg)**, then:
 
 1. Open the downloaded **Spotch.dmg**.
 2. Drag **Spotch** into the **Applications** folder.
-3. Open **Spotch** from your Applications folder.
+3. Open **Spotch** from your Applications folder. Playing music in Spotify
+   isn't enough: Spotch has to be opened once to set itself up.
 4. macOS will warn that it can't check the app for malicious software. That's
    because this is a free project that isn't registered with Apple. To allow it,
    this one time:
@@ -75,14 +91,17 @@ its login item by itself, so nothing is left behind.
 
 ### Updating
 
-Download the new version, drag it into Applications (replace the old one), and
-open it once.
+Run the install line again. If you installed from the disk image, download the
+new version, drag it into Applications (replace the old one), and open it once.
 
 Coming from version 1.2.1 or earlier? Open the new version once: it switches
 off the old copy, which you can then drag to the Trash.
 
 ## Tips
 
+- If the widget never shows up, open **System Settings → General → Login
+  Items** and make sure Spotch is allowed in the background, then run the
+  install line again.
 - Right-click the widget to change the background, turn lyrics on or off, open
   Spotify, or quit. After quitting, it comes back the next time Spotify opens.
 - Lyrics come from [LRCLIB](https://lrclib.net), a free community lyrics
