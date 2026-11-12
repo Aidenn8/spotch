@@ -33,7 +33,8 @@ endorsed by Spotify.</sub>
   styles (smoky, frosted, clear, or tinted with the album's color).
 - Optional time-synced lyrics in the open panel, scrolling up line by line
   (off by default).
-- It appears when Spotify opens and disappears when Spotify quits.
+- It appears when Spotify opens and disappears when Spotify quits, and keeps
+  doing so after you restart your Mac, with nothing to set up again.
 
 <table>
   <tr>
