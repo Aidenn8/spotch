@@ -14,10 +14,60 @@ you hover over it.
   <a href="docs/media/demo-full-screen.mp4"><img src="docs/media/demo-full-screen.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics appear in the panel. The panel closes and the view pulls back to show the whole MacBook screen."></a>
 </p>
 
-<p align="center">
-  <b><a href="#install">Install in one step</a></b>
-  · free · macOS 14+ on a MacBook with a notch
-</p>
+## Install
+
+Free. You need a MacBook with a notch (M1 or newer) on macOS 14 or later, and
+the [Spotify app](https://www.spotify.com/download).
+
+**1. Open Terminal.** Press **⌘ Command + Space**, type **Terminal**, and
+press **Return**. A window with a text prompt opens.
+
+**2. Copy this line.** Point at the box below and click the copy button that
+appears in its top-right corner.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Aidenn8/spotch/main/get.sh | bash
+```
+
+**3. Paste it into Terminal and press Return.** Press **⌘ Command + V** to
+paste. After a few seconds Terminal says **Spotch is set up** and Spotify
+opens. It doesn't ask for your password, and you can close Terminal now.
+
+**4. Play a song in Spotify.** Spotch appears in the notch. If macOS asks
+whether Spotch can control Spotify, click **OK**.
+
+That's it. From now on Spotch comes up by itself whenever Spotify opens, even
+after you restart your Mac. A notification saying Spotch added a background
+item is normal: that's the part that brings it up with Spotify.
+
+<sub>Installing this way skips the "suspicious download" and "Apple could not
+verify" warnings, which only come up for files downloaded in a browser.
+[`get.sh`](get.sh) is short if you'd like to read it first.</sub>
+
+<details>
+<summary>Prefer a disk image? (it comes with extra warnings)</summary>
+
+Spotch isn't notarized by Apple, so downloading the disk image in a browser
+brings up warnings that the steps above avoid: your browser may call it a
+suspicious download (choose **Keep**), and macOS makes you approve it once.
+
+**[⬇ Download Spotch.dmg](https://github.com/Aidenn8/spotch/releases/latest/download/Spotch.dmg)**, then:
+
+1. Open the downloaded **Spotch.dmg**.
+2. Drag **Spotch** into the **Applications** folder.
+3. Open **Spotch** from your Applications folder. Playing music in Spotify
+   isn't enough: Spotch has to be opened once to set itself up.
+4. macOS will warn that it can't check the app for malicious software. That's
+   because this is a free project that isn't registered with Apple. To allow it,
+   this one time:
+   - Click **Done** (or **OK**) on the warning.
+   - Open **System Settings → Privacy & Security**.
+   - Scroll down to the message about Spotch and click **Open Anyway**,
+     then confirm with your password.
+5. Spotify opens and the widget appears in the notch. When macOS asks whether
+   Spotch can control Spotify, click **OK**.
+
+</details>
 
 ## Features
 
@@ -44,63 +94,17 @@ you hover over it.
   </tr>
 </table>
 
-## Install
+## Updating and uninstalling
 
-You need a MacBook with a notch (Apple Silicon) on macOS 14 Sonoma or later,
-and the Spotify app.
+**To update,** do the [install steps](#install) again. They replace the old
+version. (If you installed from the disk image, download the new one, drag it
+into Applications to replace the old one, and open it once.)
 
-Open **Terminal** (in Applications → Utilities), paste this line and press
-Return:
+**To uninstall,** drag **Spotch** from your Applications folder to the Trash.
+It removes its login item by itself, so nothing is left behind.
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/Aidenn8/spotch/main/get.sh | bash
-```
-
-That's it. It downloads the latest release, puts Spotch in your Applications
-folder, sets it up and opens Spotify, and the widget appears as soon as a song
-plays. When macOS asks whether Spotch can control Spotify, click **OK**.
-
-There's no download to save, no "suspicious download" warning from your browser
-and no "Apple could not verify" step: those only come up for files downloaded
-in a browser. [`get.sh`](get.sh) is short if you'd like to read it first.
-
-<details>
-<summary>Prefer a disk image? (it comes with extra warnings)</summary>
-
-Spotch isn't notarized by Apple, so downloading the disk image in a browser
-brings up warnings that the line above avoids: your browser may call it a
-suspicious download (choose **Keep**), and macOS makes you approve it once.
-
-**[⬇ Download Spotch.dmg](https://github.com/Aidenn8/spotch/releases/latest/download/Spotch.dmg)**, then:
-
-1. Open the downloaded **Spotch.dmg**.
-2. Drag **Spotch** into the **Applications** folder.
-3. Open **Spotch** from your Applications folder. Playing music in Spotify
-   isn't enough: Spotch has to be opened once to set itself up.
-4. macOS will warn that it can't check the app for malicious software. That's
-   because this is a free project that isn't registered with Apple. To allow it,
-   this one time:
-   - Click **Done** (or **OK**) on the warning.
-   - Open **System Settings → Privacy & Security**.
-   - Scroll down to the message about Spotch and click **Open Anyway**,
-     then confirm with your password.
-5. Spotify opens and the widget appears in the notch. When macOS asks whether
-   Spotch can control Spotify, click **OK**.
-
-</details>
-
-### Uninstall
-
-Drag **Spotch** from your Applications folder to the Trash. It removes
-its login item by itself, so nothing is left behind.
-
-### Updating
-
-Run the install line again. If you installed from the disk image, download the
-new version, drag it into Applications (replace the old one), and open it once.
-
-Coming from version 1.2.1 or earlier? Open the new version once: it switches
-off the old copy, which you can then drag to the Trash.
+Coming from version 1.2.1 or earlier? Install once as above: it switches off
+the old copy, which you can then drag to the Trash.
 
 ## Tips
 
