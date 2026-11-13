@@ -63,11 +63,16 @@ That's it. It downloads the latest release, puts Spotch in your Applications
 folder, sets it up and opens Spotify, and the widget appears as soon as a song
 plays. When macOS asks whether Spotch can control Spotify, click **OK**.
 
-Because the download happens in Terminal rather than in a browser, macOS
-doesn't show its warning about apps from unregistered developers.
-[`get.sh`](get.sh) is short if you'd like to read it first.
+There's no download to save, no "suspicious download" warning from your browser
+and no "Apple could not verify" step: those only come up for files downloaded
+in a browser. [`get.sh`](get.sh) is short if you'd like to read it first.
 
-### Or install from the disk image
+<details>
+<summary>Prefer a disk image? (it comes with extra warnings)</summary>
+
+Spotch isn't notarized by Apple, so downloading the disk image in a browser
+brings up warnings that the line above avoids: your browser may call it a
+suspicious download (choose **Keep**), and macOS makes you approve it once.
 
 **[⬇ Download Spotch.dmg](https://github.com/Aidenn8/spotch/releases/latest/download/Spotch.dmg)**, then:
 
@@ -84,6 +89,8 @@ doesn't show its warning about apps from unregistered developers.
      then confirm with your password.
 5. Spotify opens and the widget appears in the notch. When macOS asks whether
    Spotch can control Spotify, click **OK**.
+
+</details>
 
 ### Uninstall
 
@@ -210,7 +217,8 @@ appears on screen while it runs. `tools/make-icon.swift` redraws the app icon.
   repeat-one.
 - The private APIs used to stay fixed during Space switches are undocumented
   and could change in a future macOS release.
-- The app isn't notarized by Apple, hence the one-time **Open Anyway** step.
+- The app isn't notarized by Apple, so the disk image download comes with
+  browser and macOS warnings. The one-line install avoids them.
 
 ## License
 
