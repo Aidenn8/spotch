@@ -10,35 +10,44 @@ Turns the notch on your MacBook into a now-playing widget: the notch shows
 what's playing in the Spotify desktop app, and grows into a mini player when
 you hover over it.
 
-<p align="center">
-  <a href="docs/media/demo-full-screen.mp4"><img src="docs/media/demo-full-screen.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics appear in the panel. The panel closes and the view pulls back to show the whole MacBook screen."></a>
-</p>
-
 ## Install
 
-Free. You need a MacBook with a notch (M1 or newer) on macOS 14 or later, and
-the [Spotify app](https://www.spotify.com/download).
+Free, and it takes about a minute. You need a MacBook with a notch (M1 or
+newer) on macOS 14 or later, and the
+[Spotify app](https://www.spotify.com/download).
 
-**1. Open Terminal.** Press **⌘ Command + Space**, type **Terminal**, and
-press **Return**. A window with a text prompt opens.
+### 1. Open Terminal
 
-**2. Copy this line.** Point at the box below and click the copy button that
-appears in its top-right corner.
+Press **⌘ Command + Space**, type **Terminal**, and press **Return**. A window
+with a text prompt opens.
+
+### 2. Copy this line
+
+Point at the box and click the copy button in its top-right corner.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Aidenn8/spotch/main/get.sh | bash
 ```
 
-**3. Paste it into Terminal and press Return.** Press **⌘ Command + V** to
-paste. After a few seconds Terminal says **Spotch is set up** and Spotify
-opens. It doesn't ask for your password, and you can close Terminal now.
+### 3. Paste it into Terminal and press Return
 
-**4. Play a song in Spotify.** Spotch appears in the notch. If macOS asks
-whether Spotch can control Spotify, click **OK**.
+Press **⌘ Command + V** to paste, then **Return**. After a few seconds
+Terminal says **Spotch is set up** and Spotify opens:
 
-That's it. From now on Spotch comes up by itself whenever Spotify opens, even
-after you restart your Mac. A notification saying Spotch added a background
-item is normal: that's the part that brings it up with Spotify.
+<p align="center">
+  <img src="docs/media/install.png" width="760" alt="A Terminal window after the install line was pasted. It reads: Downloading Spotch... Installing to /Applications/Spotch.app... Spotch is set up. Play a song in Spotify and it appears in the notch.">
+</p>
+
+It doesn't ask for your password, and you can close Terminal now.
+
+### 4. Play a song in Spotify
+
+Spotch appears in the notch. If macOS asks whether Spotch can control Spotify,
+click **OK**.
+
+**That's it.** From now on Spotch comes up by itself whenever Spotify opens,
+even after you restart your Mac. A notification saying Spotch added a
+background item is normal: that's the part that brings it up with Spotify.
 
 <sub>Installing this way skips the "suspicious download" and "Apple could not
 verify" warnings, which only come up for files downloaded in a browser.
@@ -68,6 +77,12 @@ suspicious download (choose **Keep**), and macOS makes you approve it once.
    Spotch can control Spotify, click **OK**.
 
 </details>
+
+## What it looks like
+
+<p align="center">
+  <a href="docs/media/demo-full-screen.mp4"><img src="docs/media/demo-full-screen.gif" width="640" alt="The widget sits in the notch with the album cover and a visualizer. Hovering opens a mini player; skipping to the next song changes the cover and accent color, and time-synced lyrics appear in the panel. The panel closes and the view pulls back to show the whole MacBook screen."></a>
+</p>
 
 ## Features
 
