@@ -5,6 +5,9 @@ set -euo pipefail
 cd "$(dirname "$0")"
 ./build.sh
 DEST="$HOME/Applications/Spotch.app"
+# Stop the old login agent first: it removes itself when it sees its app
+# deleted, and could otherwise remove the one the new copy sets up.
+launchctl bootout "gui/$(id -u)/com.aidenn8.spotch.watcher" 2>/dev/null || true
 pkill -x Spotch 2>/dev/null || true
 mkdir -p "$HOME/Applications"
 rm -rf "$DEST"
