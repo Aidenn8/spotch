@@ -167,17 +167,17 @@ struct NotchView: View {
         let accent = Color(nsColor: model.accent)
         return HStack(spacing: 0) {
             IconButton(symbol: "shuffle", size: 13, active: model.shuffling, accent: accent,
-                       action: model.toggleShuffle)
+                       enabled: model.shuffleAllowed && !model.isAd, action: model.toggleShuffle)
             Spacer()
-            IconButton(symbol: "backward.fill", size: 16, action: model.previous)
+            IconButton(symbol: "backward.fill", size: 16, enabled: !model.isAd, action: model.previous)
             Spacer()
             IconButton(symbol: model.isPlaying ? "pause.fill" : "play.fill", size: 22,
                        action: model.playPause)
             Spacer()
-            IconButton(symbol: "forward.fill", size: 16, action: model.next)
+            IconButton(symbol: "forward.fill", size: 16, enabled: !model.isAd, action: model.next)
             Spacer()
             IconButton(symbol: "repeat", size: 13, active: model.repeating, accent: accent,
-                       action: model.toggleRepeat)
+                       enabled: model.repeatAllowed && !model.isAd, action: model.toggleRepeat)
         }
         .padding(.horizontal, 14)
         .frame(height: 34)
@@ -272,6 +272,7 @@ struct IconButton: View {
     var size: CGFloat
     var active: Bool? = nil   // nil = plain button, else a toggle
     var accent: Color = .white
+    var enabled = true        // false when Spotify won't allow it right now
     var action: () -> Void
 
     @State private var hovering = false
@@ -293,7 +294,9 @@ struct IconButton: View {
                 .contentShape(Circle())
         }
         .buttonStyle(PressStyle())
-        .onHover { hovering = $0 }
+        .disabled(!enabled)
+        .opacity(enabled ? 1 : 0.35)
+        .onHover { hovering = enabled && $0 }
         .animation(.easeOut(duration: 0.15), value: hovering)
         .animation(.easeOut(duration: 0.2), value: active)
     }

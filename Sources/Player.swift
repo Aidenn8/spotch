@@ -23,6 +23,12 @@ final class PlayerModel: ObservableObject {
     @Published private(set) var accent = PlayerModel.fallbackAccent
     @Published private(set) var shuffling = false
     @Published private(set) var repeating = false
+    /// Whether Spotify lets shuffle / repeat change for what's playing now
+    /// (it doesn't for some contexts, or during an ad).
+    @Published private(set) var shuffleAllowed = true
+    @Published private(set) var repeatAllowed = true
+    /// A free account's ad is playing: Spotify ignores skips until it ends.
+    @Published private(set) var isAd = false
     /// False for the first moments after Spotify launches, while it still
     /// reports the last locally played song from its cache rather than what's
     /// actually playing (e.g. on another device). The widget stays hidden
@@ -90,17 +96,70 @@ final class PlayerModel: ObservableObject {
         send("playpause")
     }
 
-    func next() { demo ? playDemo(demoIndex + 1) : send("next track") }
-    func previous() { demo ? playDemo(demoIndex - 1) : send("previous track") }
+    func next() { demo ? playDemo(demoIndex + 1) : (isAd ? () : send("next track")) }
+    func previous() { demo ? playDemo(demoIndex - 1) : (isAd ? () : send("previous track")) }
+
+    // Spotify doesn't announce shuffle/repeat changes, and right after a
+    // change it can still report the old value for a moment. So a click sets
+    // the exact value it shows (never "flip whatever Spotify has"), and
+    // readings are ignored briefly so they can't flip the button back.
+    private var shuffleSetAt = Date.distantPast
+    private var repeatSetAt = Date.distantPast
+    private static let settleTime: TimeInterval = 1.2
 
     func toggleShuffle() {
-        shuffling.toggle()
-        send("set shuffling to not shuffling", refreshAfter: true)
+        guard shuffleAllowed, !isAd else { return }
+        let target = !shuffling
+        shuffling = target
+        shuffleSetAt = Date()
+        send("set shuffling to \(target)", cache: false)
     }
 
     func toggleRepeat() {
-        repeating.toggle()
-        send("set repeating to not repeating", refreshAfter: true)
+        guard repeatAllowed, !isAd else { return }
+        let target = !repeating
+        repeating = target
+        repeatSetAt = Date()
+        send("set repeating to \(target)", cache: false)
+    }
+
+    /// Applies a reading of Spotify's shuffle/repeat (internal for tests).
+    func applyModes(shuffle: Bool, shuffleOK: Bool, repeat rep: Bool, repeatOK: Bool, now: Date = Date()) {
+        if now.timeIntervalSince(shuffleSetAt) > Self.settleTime, shuffle != shuffling { shuffling = shuffle }
+        if now.timeIntervalSince(repeatSetAt) > Self.settleTime, rep != repeating { repeating = rep }
+        if shuffleOK != shuffleAllowed { shuffleAllowed = shuffleOK }
+        if repeatOK != repeatAllowed { repeatAllowed = repeatOK }
+    }
+
+    private static let modesScript = """
+    if application "Spotify" is running then
+        tell application "Spotify" to return {shuffling, shuffling enabled, repeating, repeating enabled}
+    end if
+    return {}
+    """
+
+    private var modesTimer: Timer?
+
+    /// While the panel is open, re-read shuffle and repeat every second so
+    /// changes made in Spotify itself show up right away.
+    func watchModes(_ on: Bool) {
+        modesTimer?.invalidate()
+        modesTimer = nil
+        guard on, !demo else { return }
+        let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in self?.readModes() }
+        RunLoop.main.add(timer, forMode: .common)
+        modesTimer = timer
+    }
+
+    private func readModes() {
+        guard Self.isRunning else { return }
+        scripts.run(Self.modesScript) { [weak self] d in
+            guard let self, let d, d.numberOfItems >= 4 else { return }
+            self.applyModes(shuffle: d.atIndex(1)?.booleanValue ?? false,
+                            shuffleOK: d.atIndex(2)?.booleanValue ?? true,
+                            repeat: d.atIndex(3)?.booleanValue ?? false,
+                            repeatOK: d.atIndex(4)?.booleanValue ?? true)
+        }
     }
 
     func seek(to seconds: TimeInterval) {
@@ -166,7 +225,7 @@ final class PlayerModel: ObservableObject {
             set s to player state as string
             if s is "stopped" then return {s}
             set t to current track
-            return {s, id of t, name of t, artist of t, album of t, duration of t, player position, artwork url of t, shuffling, repeating}
+            return {s, id of t, name of t, artist of t, album of t, duration of t, player position, artwork url of t, shuffling, repeating, shuffling enabled, repeating enabled}
         end tell
     end if
     return {"closed"}
@@ -200,12 +259,14 @@ final class PlayerModel: ObservableObject {
         loadArtwork(d.atIndex(8)?.stringValue, for: t.id)
         let shuffle = d.atIndex(9)?.booleanValue ?? false
         let rep = d.atIndex(10)?.booleanValue ?? false
-        if shuffle != shuffling { shuffling = shuffle }
-        if rep != repeating { repeating = rep }
+        applyModes(shuffle: shuffle, shuffleOK: d.numberOfItems >= 11 ? d.atIndex(11)?.booleanValue ?? true : true,
+                   repeat: rep, repeatOK: d.numberOfItems >= 12 ? d.atIndex(12)?.booleanValue ?? true : true)
     }
 
     private func setTrack(_ t: Track) {
         if t != track { track = t }
+        let ad = t.id.hasPrefix("spotify:ad:")
+        if ad != isAd { isAd = ad }
         // Spotify moving off its cached song means it has synced.
         if !ready {
             if cachedTrackID == nil { cachedTrackID = t.id } else if t.id != cachedTrackID { markSynced() }
