@@ -221,13 +221,14 @@ struct ProgressRow: View {
             let duration = max(model.track?.duration ?? 0, 1)
             let fraction = dragFraction ?? model.position(at: context.date) / duration
             let active = hovering || dragFraction != nil
-            // Whole seconds on both sides so elapsed + remaining always adds up.
             let elapsed = (fraction * duration).rounded(.down)
 
+            // Like Spotify: elapsed time counts up on the left, the song's
+            // fixed length on the right. Plain digit changes, no animation.
             HStack(spacing: 10) {
                 Text(Self.format(elapsed))
-                    .contentTransition(.numericText())
-                    .animation(.easeInOut(duration: 0.25), value: elapsed)
+                    .contentTransition(.identity)
+                    .transaction { $0.animation = nil }
                     .frame(width: 34, alignment: .leading)
 
                 GeometryReader { g in
@@ -249,9 +250,9 @@ struct ProgressRow: View {
                         })
                 }
 
-                Text("-" + Self.format(duration.rounded(.down) - elapsed))
-                    .contentTransition(.numericText(countsDown: true))
-                    .animation(.easeInOut(duration: 0.25), value: elapsed)
+                Text(Self.format(model.track?.duration ?? 0))
+                    .contentTransition(.identity)
+                    .transaction { $0.animation = nil }
                     .frame(width: 34, alignment: .trailing)
             }
             .font(.system(size: 10, weight: .medium).monospacedDigit())
