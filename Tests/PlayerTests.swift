@@ -72,6 +72,34 @@ final class PlayerTests: XCTestCase {
         XCTAssertEqual(model.position(at: Date().addingTimeInterval(30)), paused, accuracy: 1e-9)
     }
 
+    func testStaleReadingAfterClickDoesNotFlipBack() {
+        let model = PlayerModel(demo: true)  // demo starts with shuffle on
+        model.applyModes(shuffle: false, shuffleOK: true, repeat: false, repeatOK: true)
+        XCTAssertFalse(model.shuffling)
+
+        model.toggleShuffle()  // click: shuffle on
+        XCTAssertTrue(model.shuffling)
+        // Spotify still reports the old value right after the change.
+        model.applyModes(shuffle: false, shuffleOK: true, repeat: false, repeatOK: true)
+        XCTAssertTrue(model.shuffling, "a stale reading must not flip the button back")
+
+        // Once settled, Spotify's own value wins (e.g. changed in Spotify itself).
+        model.applyModes(shuffle: false, shuffleOK: true, repeat: true, repeatOK: true,
+                         now: Date().addingTimeInterval(5))
+        XCTAssertFalse(model.shuffling)
+        XCTAssertTrue(model.repeating)
+    }
+
+    func testTogglesDoNothingWhenSpotifyDisallowsThem() {
+        let model = PlayerModel(demo: true)
+        model.applyModes(shuffle: false, shuffleOK: false, repeat: false, repeatOK: false)
+        XCTAssertFalse(model.shuffleAllowed)
+        model.toggleShuffle()
+        model.toggleRepeat()
+        XCTAssertFalse(model.shuffling)
+        XCTAssertFalse(model.repeating)
+    }
+
     func testDemoDataIsWellFormed() {
         let ids = DemoTrack.all.map(\.track.id)
         XCTAssertEqual(Set(ids).count, ids.count)

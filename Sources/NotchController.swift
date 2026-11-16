@@ -188,8 +188,10 @@ final class NotchController {
         guard newMode != oldMode || newLyrics != state.lyricsLayout else { return }
         shrinkWork?.cancel()
 
-        // Spotify doesn't announce shuffle/repeat changes, so re-read them on open.
+        // Spotify doesn't announce shuffle/repeat changes, so re-read them on
+        // open and keep checking once a second while the panel is open.
         if newMode == .expanded && oldMode != .expanded { model.refresh() }
+        if (newMode == .expanded) != (oldMode == .expanded) { model.watchModes(newMode == .expanded) }
         // Lyrics only show in the open panel; their timers pause otherwise.
         lyrics.visible = newMode == .expanded
 
